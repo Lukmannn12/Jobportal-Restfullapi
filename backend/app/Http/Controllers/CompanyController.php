@@ -7,28 +7,24 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Company::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:companies,email',
+        ]);
+
+        $company = Company::create($request->all());
+
+        return response()->json([
+            'message' => 'Company created successfully',
+            'company' => $company
+        ], 201);
     }
 
     /**
@@ -36,7 +32,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        return response()->json($company);
     }
 
     /**
@@ -44,7 +40,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+        
     }
 
     /**
