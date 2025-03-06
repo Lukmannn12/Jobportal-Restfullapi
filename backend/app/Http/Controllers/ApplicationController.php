@@ -11,16 +11,7 @@ class ApplicationController extends Controller
     public function index()
     {
         try {
-            $userId = Auth::id();
-
-            if (!$userId) {
-                return response()->json([
-                    'message' => 'User harus login dulu'
-                ], 401);
-            }
-
             $applications = Application::with(['user:id,name', 'job:id,title'])
-                ->where('user_id', $userId)
                 ->get()
                 ->map(function ($application) {
                     return [
@@ -33,7 +24,7 @@ class ApplicationController extends Controller
                         'updated_at' => $application->updated_at,
                     ];
                 });
-
+    
             return response()->json($applications);
         } catch (\Exception $e) {
             return response()->json([
@@ -42,6 +33,7 @@ class ApplicationController extends Controller
             ], 500);
         }
     }
+    
 
     public function store(Request $request)
 {
