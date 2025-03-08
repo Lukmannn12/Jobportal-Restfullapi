@@ -18,4 +18,12 @@ class DashboardController extends Controller
         // Kirimkan data ke view
         return view('dashboard', compact('totalCompanies'));
     }
+
+    public function indexx()
+    {
+        $response = Http::get('http://127.0.0.1:8000/api/jobs');
+        $jobs = $response->json();
+
+        return view('welcome', compact('jobs'));
+    }
 }

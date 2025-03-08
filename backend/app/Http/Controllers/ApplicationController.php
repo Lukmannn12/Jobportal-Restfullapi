@@ -24,7 +24,7 @@ class ApplicationController extends Controller
                         'updated_at' => $application->updated_at,
                     ];
                 });
-    
+
             return response()->json($applications);
         } catch (\Exception $e) {
             return response()->json([
@@ -33,43 +33,41 @@ class ApplicationController extends Controller
             ], 500);
         }
     }
-    
+
 
     public function store(Request $request)
-{
-    try {
-        $userId = Auth::id();
+    {
+        try {
+            $userId = Auth::id();
 
-        if (!$userId) {
+            if (!$userId) {
+                return response()->json([
+                    'message' => 'User harus login dulu'
+                ], 401);
+            }
+
+            $request->validate([
+                'job_id' => 'required|exists:jobs,id',
+                'cover_letter' => 'required|string',
+                'status' => 'required|in:pending,approved,rejected'
+            ]);
+
+            $application = Application::create([
+                'user_id' => $userId,
+                'job_id' => $request->job_id,
+                'cover_letter' => $request->cover_letter,
+                'status' => $request->status
+            ]);
+
             return response()->json([
-                'message' => 'User harus login dulu'
-            ], 401);
+                'message' => 'Lamaran berhasil dikirim',
+                'application' => $application
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan pada server',
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        $request->validate([
-            'job_id' => 'required|exists:jobs,id',
-            'cover_letter' => 'required|string',
-            'status' => 'required|in:pending,approved,rejected'
-        ]);
-
-        $application = Application::create([
-            'user_id' => $userId,
-            'job_id' => $request->job_id,
-            'cover_letter' => $request->cover_letter,
-            'status' => $request->status
-        ]);
-
-        return response()->json([
-            'message' => 'Lamaran berhasil dikirim',
-            'application' => $application
-        ], 201);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => 'Terjadi kesalahan pada server',
-            'message' => $e->getMessage(),
-        ], 500);
     }
 }
-
-}
-

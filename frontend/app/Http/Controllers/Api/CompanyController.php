@@ -13,14 +13,30 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $response = Http::get('http://127.0.0.1:8000/api/companies');
-        $companies = $response->json();
+        $respone = Http::get('http://127.0.0.1:8000/api/companies');
 
-        return view('welcome', compact('companies'));
+        $companies = $respone->json();
+        return view('company.index', compact('companies'));
     }
+
+    public function create()
+    {
+        return view('company.create');
+    }
+
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+        ]);
+    
+        Http::post('http://127.0.0.1:8000/api/companies', [
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+    
+        return redirect()->route('company.index')->with('success', 'Company berhasil ditambahkan!');
     }
 
     /**

@@ -24,11 +24,28 @@
             <button id="closeSidebar" class="md:hidden text-white text-md" onclick="toggleSidebar()">✖</button>
         </div>
         <nav class="mt-4">
-            <a href="/dashboard" class="block py-2 px-5 hover:bg-gray-700">🏠 Dashboard</a>
-            <a href="/users" class="block py-2 px-5 hover:bg-gray-700">🏢 Company</a>
-            <a href="/settings" class="block py-2 px-5 hover:bg-gray-700">💼 Job</a>
-            <a href="/settings" class="block py-2 px-5 hover:bg-gray-700">📄 Application</a>
-            <a href="/logout" class="block py-2 px-5 hover:bg-gray-700">🚪 Logout</a>
+            <a href="/dashboard" class="block py-2 px-5 hover:bg-gray-700 {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-white' : '' }}">🏠 Dashboard</a>
+            <a href="{{ route('company.index') }}"
+                class="block py-2 px-5 hover:bg-gray-700 {{ request()->routeIs('company.*') ? 'bg-gray-700 text-white' : '' }}">
+                🏢 Company
+            </a>
+
+            <a href="{{ route('jobs.index') }}"
+                class="block py-2 px-5 hover:bg-gray-700 {{ request()->routeIs('jobs.*') ? 'bg-gray-700 text-white' : '' }}">
+                💼 Job
+            </a>
+
+            <a href="{{ route('application.index') }}"
+                class="block py-2 px-5 hover:bg-gray-700 {{ request()->routeIs('application.*') ? 'bg-gray-700 text-white' : '' }}">
+                📄 Application
+            </a>
+
+            <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="block py-2 px-5 hover:bg-gray-700">
+                    🚪 Logout
+                </button>
+            </form>
         </nav>
     </div>
 
