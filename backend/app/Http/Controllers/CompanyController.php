@@ -12,6 +12,16 @@ class CompanyController extends Controller
         return response()->json(Company::all());
     }
 
+    public function getTotalCompanies()
+    {
+        $totalCompanies = Company::count();
+    
+        return response()->json([
+            'total_companies' => $totalCompanies
+        ]);
+    }
+    
+
     public function store(Request $request)
     {
         $request->validate([

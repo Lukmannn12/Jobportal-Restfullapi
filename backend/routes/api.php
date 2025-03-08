@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Company Routes
+Route::get('companies/total', [CompanyController::class, 'getTotalCompanies']);
 Route::apiResource('companies', CompanyController::class);
 Route::apiResource('jobs', JobController::class);
 Route::middleware('auth:sanctum')->apiResource('applications', ApplicationController::class);

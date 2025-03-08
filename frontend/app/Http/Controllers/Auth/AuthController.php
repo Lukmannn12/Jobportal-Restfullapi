@@ -13,42 +13,48 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-        public function login(Request $request)
-        {
-            $response = Http::post('http://127.0.0.1:8000/api/login', [
-                'email' => $request->email,
-                'password' => $request->password,
-            ]);
-        
-            if ($response->successful()) {
-                $data = $response->json(); // Ambil token dari response
-        
-                if (!isset($data['token'])) {
-                    return back()->withErrors(['email' => 'Login gagal, token tidak ditemukan']);
-                }
-        
-                // Gunakan token untuk mengambil data user yang login
-                $userResponse = Http::withToken($data['token'])->get('http://127.0.0.1:8000/api/user');
-        
-                if ($userResponse->successful()) {
-                    $user = $userResponse->json();
-        
-                    // Simpan user dan token dalam session Laravel
-                     // Pastikan session tersimpan
-                     session([
-                        'user' => $user,
-                        'token' => $data['token'],
-                    ]);
-                    
-                    session()->save(); // Pastikan session tersimpan
-                    return redirect('/')->with('success', 'Login berhasil');
-                } else {
-                    return back()->withErrors(['email' => 'Gagal mengambil data user']);
-                }
+    public function login(Request $request)
+    {
+        $response = Http::post('http://127.0.0.1:8000/api/login', [
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+    
+        if ($response->successful()) {
+            $data = $response->json(); // Ambil token dari response
+    
+            if (!isset($data['token'])) {
+                return back()->withErrors(['email' => 'Login gagal, token tidak ditemukan']);
             }
-        
-            return back()->withErrors(['email' => 'Email atau password salah']);
+    
+            // Gunakan token untuk mengambil data user yang login
+            $userResponse = Http::withToken($data['token'])->get('http://127.0.0.1:8000/api/user');
+    
+            if ($userResponse->successful()) {
+                $user = $userResponse->json();
+    
+                // Simpan user dan token dalam session Laravel
+                session([
+                    'user' => $user,
+                    'token' => $data['token'],
+                ]);
+    
+                session()->save(); // Pastikan session tersimpan
+    
+                // Cek role user
+                if ($user['role'] === 'admin') {
+                    return redirect('/dashboard')->with('success', 'Login berhasil sebagai Admin');
+                } else {
+                    return redirect('/')->with('success', 'Login berhasil sebagai User');
+                }
+            } else {
+                return back()->withErrors(['email' => 'Gagal mengambil data user']);
+            }
         }
+    
+        return back()->withErrors(['email' => 'Email atau password salah']);
+    }
+    
         
     public function showRegister()
     {
